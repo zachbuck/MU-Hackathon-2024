@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=4 uid="uid://m2vci5yhnnaq"]
+[gd_scene load_steps=18 format=4 uid="uid://m2vci5yhnnaq"]
 
 [ext_resource type="Texture2D" uid="uid://b3rykko0nmbjk" path="res://Dev Background Sprites.png" id="1_7mg1t"]
 [ext_resource type="Texture2D" uid="uid://dpp5uj0s882gw" path="res://Dev Plant Sprites.png" id="2_sn0pb"]
 [ext_resource type="Script" path="res://machines.gd" id="3_hpxos"]
 [ext_resource type="Script" path="res://camera.gd" id="3_ol64h"]
+[ext_resource type="Script" path="res://ninePatchRectContainer.gd" id="5_p4hte"]
+[ext_resource type="Texture2D" uid="uid://bq8dupgjudgax" path="res://Menu 9 Panel Rect.png" id="5_x3r75"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hrt8p"]
 texture = ExtResource("1_7mg1t")
@@ -38,6 +40,30 @@ texture = ExtResource("2_sn0pb")
 [sub_resource type="TileSet" id="TileSet_p02lj"]
 sources/0 = SubResource("TileSetAtlasSource_gl1ss")
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6bmik"]
+load_path = "res://.godot/imported/Item Sprites.png-d186ae6c1c9d1e612750d8369070c735.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_50uum"]
+atlas = SubResource("CompressedTexture2D_6bmik")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="LabelSettings" id="LabelSettings_lv23n"]
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_dnf60"]
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sp26n"]
+load_path = "res://.godot/imported/Item Sprites.png-d186ae6c1c9d1e612750d8369070c735.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3l25"]
+atlas = SubResource("CompressedTexture2D_sp26n")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ksdkw"]
+atlas = SubResource("CompressedTexture2D_6bmik")
+region = Rect2(32, 0, 16, 16)
+
 [node name="Main" type="Node2D"]
 
 [node name="Background" type="TileMapLayer" parent="."]
@@ -53,3 +79,96 @@ script = ExtResource("3_hpxos")
 [node name="Camera" type="Camera2D" parent="."]
 zoom = Vector2(4, 4)
 script = ExtResource("3_ol64h")
+
+[node name="Control" type="Control" parent="Camera"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Container" type="Container" parent="Camera/Control" node_paths=PackedStringArray("otherNode")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -20.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+script = ExtResource("5_p4hte")
+otherNode = NodePath("VBoxContainer")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Camera/Control/Container"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("5_x3r75")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera/Control/Container"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Earth" type="HBoxContainer" parent="Camera/Control/Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Camera/Control/Container/VBoxContainer/Earth"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_50uum")
+
+[node name="Label" type="Label" parent="Camera/Control/Container/VBoxContainer/Earth"]
+layout_mode = 2
+text = "Earth"
+label_settings = SubResource("LabelSettings_lv23n")
+
+[node name="Label2" type="Label" parent="Camera/Control/Container/VBoxContainer/Earth"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_dnf60")
+
+[node name="Water" type="HBoxContainer" parent="Camera/Control/Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Camera/Control/Container/VBoxContainer/Water"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_c3l25")
+
+[node name="Label" type="Label" parent="Camera/Control/Container/VBoxContainer/Water"]
+layout_mode = 2
+text = "Water"
+label_settings = SubResource("LabelSettings_lv23n")
+
+[node name="Label2" type="Label" parent="Camera/Control/Container/VBoxContainer/Water"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_dnf60")
+
+[node name="Seeds" type="HBoxContainer" parent="Camera/Control/Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Camera/Control/Container/VBoxContainer/Seeds"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_ksdkw")
+
+[node name="Label" type="Label" parent="Camera/Control/Container/VBoxContainer/Seeds"]
+layout_mode = 2
+text = "Seeds"
+label_settings = SubResource("LabelSettings_lv23n")
+
+[node name="Label2" type="Label" parent="Camera/Control/Container/VBoxContainer/Seeds"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_dnf60")

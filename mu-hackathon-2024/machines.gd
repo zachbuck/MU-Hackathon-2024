@@ -1,5 +1,20 @@
 extends TileMapLayer
 
+#	 TODO 
+# - Add building stuff
+# - add inventory panel
+# - Add better sprites
+# - Add main menu
+# - add spreader funcitonality for expanding
+# - splitter / merger functionality
+# - maybe some particles around the plants
+
+#	TODO far away goals
+# - save / load?
+# - more machines
+# - world gen
+# - 
+
 @onready
 var background = self.get_parent().get_node("Background")
 
@@ -62,6 +77,7 @@ func _process(delta):
 		process_machines()
 		last_update -= 1
 		print(inventory)
+		updateInventory()
 
 func process_machines():
 	var conveyor_list = {}
@@ -81,6 +97,13 @@ func process_machines():
 			update_water(machine, machine.pos)
 		elif machine.type == "Seed Maker":
 			update_seed_maker(machine, machine.pos)
+
+
+func updateInventory():
+	var container = get_parent().get_node("Camera/Control/Container/VBoxContainer")
+	container.get_node("Earth/Label2").text = str(inventory["dirt"])
+	container.get_node("Water/Label2").text = str(inventory["water"])
+	container.get_node("Seeds/Label2").text = str(inventory["seeds"])
 
 
 func find_machine_at_position(pos: Vector2i) -> Machine:
@@ -126,8 +149,6 @@ func update_conveyor(conveyor: Machine, pos: Vector2i, conveyor_list: Dictionary
 	if conveyor_list[conveyor] == true:
 		return
 	
-	if conveyor.inventory.size() > 0:
-		get_cell_tile_data(pos).modulate = Color(1, 0, 0)
 	var output: Machine
 	if conveyor.rot == "up":
 		output = find_machine_at_position(pos - Vector2i(0, 1))
