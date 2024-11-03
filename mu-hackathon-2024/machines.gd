@@ -1,9 +1,6 @@
 extends TileMapLayer
 
 #	 TODO 
-# - Add building stuff
-# - add inventory panel
-# - Add better sprites
 # - Add main menu
 # - add spreader funcitonality for expanding
 # - splitter / merger functionality
@@ -76,7 +73,6 @@ func _process(delta):
 	if last_update > 1:
 		process_machines()
 		last_update -= 1
-		print(inventory)
 		updateInventory()
 
 func process_machines():
@@ -148,6 +144,8 @@ func update_conveyor(conveyor: Machine, pos: Vector2i, conveyor_list: Dictionary
 	
 	if conveyor_list[conveyor] == true:
 		return
+		
+	conveyor_list[conveyor] = true
 	
 	var output: Machine
 	if conveyor.rot == "up":
@@ -178,7 +176,6 @@ func update_conveyor(conveyor: Machine, pos: Vector2i, conveyor_list: Dictionary
 					inventory[type] += 1
 					conveyor.inventory.erase(type)
 	
-	conveyor_list[conveyor] = true
 
 
 func update_water(water: Machine, pos: Vector2i):
