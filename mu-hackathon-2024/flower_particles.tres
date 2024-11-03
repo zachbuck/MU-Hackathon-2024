@@ -1,0 +1,21 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=3 format=3 uid="uid://bvpowf7ruw56y"]
+
+[sub_resource type="Curve" id="Curve_lwnhu"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0, -14.7212), 0.0, 0.0, 0, 0, Vector2(0.511211, 360), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_nac2w"]
+curve = SubResource("Curve_lwnhu")
+
+[resource]
+particle_flag_disable_z = true
+angle_min = -529.8
+angle_max = 390.3
+angle_curve = SubResource("CurveTexture_nac2w")
+direction = Vector3(0, 1, 0)
+spread = 96.429
+gravity = Vector3(0, -10, 0)
+tangential_accel_min = -32.04
+tangential_accel_max = 32.85

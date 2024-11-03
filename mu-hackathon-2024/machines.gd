@@ -1,16 +1,12 @@
 extends TileMapLayer
 
 #	 TODO 
-# - Add main menu
-# - add spreader funcitonality for expanding
-# - splitter / merger functionality
 # - maybe some particles around the plants
 
 #	TODO far away goals
 # - save / load?
 # - more machines
 # - world gen
-# - 
 
 @onready
 var background = self.get_parent().get_node("Background")
@@ -35,20 +31,42 @@ class Machine:
 	var rot: String
 	var type: String
 	
-	var last_updated: float = 0
+	var last_updated: int = 0
 	var inventory: Array = []
+	var particles: Node = null
 	
-	func init(pos, rot, type):
+	func init(pos, rot, type, node):
 		self.pos = pos
 		self.rot = rot
 		self.type = type
+		
+		if self.type == "Digger":
+			particles = GPUParticles2D.new()
+			particles.process_material = load("res://flower_particles.tres")
+			particles.modulate = Color(0.941, 0.541, 0.271)
+			particles.position = Vector2(pos) * 16 + Vector2(8, 2)
+			node.add_child(particles)
+		elif self.type == "Water":
+			particles = GPUParticles2D.new()
+			particles.process_material = load("res://flower_particles.tres")
+			particles.modulate = Color(0.392, 0.957, 0.941)
+			particles.position = Vector2(pos) * 16 + Vector2(8, 6)
+			node.add_child(particles)
+		elif self.type == "Spreader":
+			particles = GPUParticles2D.new()
+			particles.process_material = load("res://flower_particles.tres")
+			particles.modulate = Color(0.984, 0.949, 0.212)
+			particles.position = Vector2(pos) * 16 + Vector2(8, 2)
+			node.add_child(particles)
+			
+			
 		
 var machines: Array = []
 
 var inventory: Dictionary = {
 	"dirt": 0,
 	"water": 0,
-	"seeds": 0
+	"seeds": 10
 }
 
 class Item:
@@ -63,7 +81,7 @@ func _ready():
 			var positions = get_used_cells_by_id(-1, atlas_position, -1)
 			for pos in positions:
 				var temp = Machine.new()
-				temp.init(pos, direction, machine_name)
+				temp.init(pos, direction, machine_name, self)
 				machines.append(temp)
 			
 			
@@ -86,7 +104,7 @@ func process_machines():
 	
 	for machine in machines:
 		if machine.type == "Spreader":
-			pass
+			update_spreader(machine, machine.pos)
 		elif machine.type == "Digger":
 			update_digger(machine, machine.pos)
 		elif machine.type == "Water":
@@ -107,6 +125,13 @@ func find_machine_at_position(pos: Vector2i) -> Machine:
 		if machine.pos == pos:
 			return machine
 	return null
+
+
+func update_spreader(spreader: Machine, pos: Vector2i):
+	spreader.last_updated += 1
+	if spreader.last_updated == 10:
+		inventory["seeds"] -= 1
+		spreader.last_updated -= 10
 
 
 func update_seed_maker(seed_maker: Machine, pos: Vector2i):
@@ -179,6 +204,12 @@ func update_conveyor(conveyor: Machine, pos: Vector2i, conveyor_list: Dictionary
 
 
 func update_water(water: Machine, pos: Vector2i):
+	
+	if water.last_updated < 4:
+		water.last_updated += 1
+		return
+	water.last_updated -= 4
+	
 	if background.get_cell_atlas_coords(pos) == background_tiles["water"]:
 		if water.inventory.size() < 1:
 			var temp = Item.new()
@@ -212,6 +243,12 @@ func update_water(water: Machine, pos: Vector2i):
 
 
 func update_digger(digger: Machine, pos: Vector2i):
+	
+	if digger.last_updated < 4:
+		digger.last_updated += 1
+		return
+	digger.last_updated -= 4
+	
 	if background.get_cell_atlas_coords(pos) == background_tiles["dirt"]:
 		if digger.inventory.size() < 1:
 			var temp = Item.new()

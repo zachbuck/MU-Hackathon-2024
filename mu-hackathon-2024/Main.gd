@@ -43,10 +43,22 @@ func _input(event):
 			$Sprite2D.modulate.b = 0
 	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			$Machines.machines.erase($Machines.find_machine_at_position(Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16))))
+			var base_pos = Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16))
+			if $Machines.find_machine_at_position(base_pos) != null:
+				if $Machines.find_machine_at_position(base_pos).type == "Spreader":
+					for x in range(0, 21):
+						for y in range(0, 21):
+							if $Background.get_cell_atlas_coords(base_pos - Vector2i(10, 10) + Vector2i(x, y)) != Vector2i(1, 0):
+								continue
+							$Background.set_cell(base_pos - Vector2i(10, 10) + Vector2i(x, y), 0, Vector2i(0, 0), 0)
+			
+			var machine = $Machines.find_machine_at_position(Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16)))
+			if machine.particles != null:
+				$Machines.remove_child(machine.particles)
+			$Machines.machines.erase(machine)
 			$Machines.erase_cell(Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16)))
 			
-			var base_pos = Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16))
+			
 			if $Machines.find_machine_at_position(base_pos + Vector2i(1, 0)) != null:
 				if $Machines.find_machine_at_position(base_pos + Vector2i(1, 0)).type == "Conveyor":
 					$Machines.set_cell(base_pos + Vector2i(1, 0), 0, get_conveyor_atlas(base_pos + Vector2i(1, 0)), 0)
@@ -61,15 +73,22 @@ func _input(event):
 					$Machines.set_cell(base_pos - Vector2i(0, 1), 0, get_conveyor_atlas(base_pos - Vector2i(0, 1)), 0)
 		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed and selected != "":
 			var base_pos = Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16))
-			if $Machines.find_machine_at_position(base_pos) != null:
+			if $Machines.find_machine_at_position(base_pos) != null or (not get_placeable(selected, base_pos)) or ($Machines.inventory["seeds"] < 1):
 				return
 			var temp = $Machines.Machine.new()
-			temp.init(Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16)), orientation, selected)
+			temp.init(Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16)), orientation, selected, $Machines)
 			$Machines.machines.append(temp)
 			var direction = orientation if selected != "Spreader" else "default"
 			$Machines.set_cell(Vector2i(floor(((event.global_position.x - 960) / 4 + $Camera.position.x) / 16), floor(((event.global_position.y - 540) / 4 + $Camera.position.y) / 16)), 0, Vector2i(sprite_data[selected][direction][0], sprite_data[selected][direction][1]), 0)
+			$Machines.inventory["seeds"] -= 1
 			if selected == "Conveyor":
 				$Machines.set_cell(base_pos, 0, get_conveyor_atlas(base_pos), 0)
+			elif selected == "Spreader":
+				for x in range(0, 21):
+					for y in range(0, 21):
+						if $Background.get_cell_atlas_coords(base_pos - Vector2i(10, 10) + Vector2i(x, y)) != Vector2i(0, 0):
+							continue
+						$Background.set_cell(base_pos - Vector2i(10, 10) + Vector2i(x, y), 0, Vector2i(1, 0), 0)
 			if $Machines.find_machine_at_position(base_pos + Vector2i(1, 0)) != null:
 				if $Machines.find_machine_at_position(base_pos + Vector2i(1, 0)).type == "Conveyor":
 					$Machines.set_cell(base_pos + Vector2i(1, 0), 0, get_conveyor_atlas(base_pos + Vector2i(1, 0)), 0)

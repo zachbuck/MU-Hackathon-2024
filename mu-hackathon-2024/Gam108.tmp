@@ -115,7 +115,6 @@ atlas = ExtResource("7_gp1le")
 region = Rect2(64, 0, 16, 16)
 
 [node name="Main" type="Node2D"]
-texture_filter = 1
 script = ExtResource("1_7m662")
 
 [node name="Background" type="TileMapLayer" parent="."]
@@ -299,7 +298,7 @@ texture_normal = SubResource("AtlasTexture_hsi21")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 visible = false
-modulate = Color(0.984314, 0.94902, 0.211765, 1)
+modulate = Color(0.941, 0.541, 0.271, 1)
 process_material = ExtResource("8_7eena")
 
 [connection signal="pressed" from="Camera/Control/Container2/HBoxContainer/Spreader" to="." method="on_select_building" binds= ["Spreader"]]
